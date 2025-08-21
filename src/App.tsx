@@ -28,17 +28,11 @@ function App() {
 
         {/* New comment form */}
         <section className="bg-gray-800 rounded-lg border border-gray-700 p-6 mb-8 shadow-lg">
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Add a Comment
-          </h2>
           <CommentForm onSubmit={handleAddComment} />
         </section>
 
         {/* Comments list */}
         <section>
-          <h2 className="text-lg font-semibold text-white mb-4">
-            Comments ({comments.length})
-          </h2>
           <CommentList
             comments={comments}
             onReply={handleReply}
