@@ -102,7 +102,7 @@ export const useComments = () => {
   };
 };
 
-// Helper function to remove a reply from a comment recursively
+// Helper to remove a reply from a comment recursively
 const removeReplyFromComment = (comment: Comment, replyId: string): Comment => {
   return {
     ...comment,

@@ -1,3 +1,5 @@
+// Yoinked from company website's code: https://www.autarc.energy/global
+
 interface AutarcLogoProps {
   className?: string;
   width?: number;
