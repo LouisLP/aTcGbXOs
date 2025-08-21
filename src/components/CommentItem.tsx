@@ -23,50 +23,50 @@ export const CommentItem = ({
     setShowReplyForm(false);
   };
 
-  // Styling classes based on depth (but let's not go too crazy)
+  // Styling Tailwind classes based on depth (but not going too deep)
   const getDepthStyling = (depth: number) => {
     const styles = [
       {
         margin: "",
-        background: "bg-white",
-        border: "border-gray-200",
+        background: "bg-gray-800",
+        border: "border-gray-700",
         leftBorder: "",
       }, // depth 0
       {
         margin: "ml-2",
-        background: "bg-blue-50/50",
-        border: "border-blue-200",
-        leftBorder: "border-l-4 border-l-blue-400/50",
+        background: "bg-blue-900/40",
+        border: "border-blue-700",
+        leftBorder: "border-l-4 border-l-blue-500",
       }, // depth 1
       {
         margin: "ml-4",
-        background: "bg-green-50/50",
-        border: "border-green-200",
-        leftBorder: "border-l-4 border-l-green-400",
+        background: "bg-green-900/40",
+        border: "border-green-700",
+        leftBorder: "border-l-4 border-l-green-500",
       }, // depth 2
       {
         margin: "ml-6",
-        background: "bg-purple-50/50",
-        border: "border-purple-200",
-        leftBorder: "border-l-4 border-l-purple-400",
+        background: "bg-purple-900/40",
+        border: "border-purple-700",
+        leftBorder: "border-l-4 border-l-purple-500",
       }, // depth 3
       {
         margin: "ml-8",
-        background: "bg-orange-50/50",
-        border: "border-orange-200",
-        leftBorder: "border-l-4 border-l-orange-400",
+        background: "bg-orange-900/40",
+        border: "border-orange-700",
+        leftBorder: "border-l-4 border-l-orange-500",
       }, // depth 4
       {
         margin: "ml-10",
-        background: "bg-pink-50/50",
-        border: "border-pink-200",
-        leftBorder: "border-l-4 border-l-pink-400",
+        background: "bg-pink-900/40",
+        border: "border-pink-700",
+        leftBorder: "border-l-4 border-l-pink-500",
       }, // depth 5
       {
         margin: "ml-12",
-        background: "bg-indigo-50/50",
-        border: "border-indigo-200",
-        leftBorder: "border-l-4 border-l-indigo-400",
+        background: "bg-indigo-900/40",
+        border: "border-indigo-700",
+        leftBorder: "border-l-4 border-l-indigo-500",
       }, // depth 6+
     ];
 
@@ -85,7 +85,7 @@ export const CommentItem = ({
         {/* Comment header */}
         <div className="flex items-center justify-between mb-2">
           {/* Time posted (shortened) */}
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-400">
             {comment.createdAt.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -94,20 +94,20 @@ export const CommentItem = ({
           {/* Delete button */}
           <button
             onClick={() => onDelete(comment.id)}
-            className="text-red-500 hover:text-red-700 text-sm font-medium"
+            className="text-red-400 hover:text-red-300 text-sm font-medium"
           >
             Delete
           </button>
         </div>
 
         {/* Comment text */}
-        <p className="text-gray-800 mb-3 whitespace-pre-wrap">{comment.text}</p>
+        <p className="text-gray-100 mb-3 whitespace-pre-wrap">{comment.text}</p>
 
         {/* Action buttons */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowReplyForm(!showReplyForm)}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            className="text-blue-400 hover:text-blue-300 text-sm font-medium"
           >
             {showReplyForm ? "Cancel" : "Reply"}
           </button>
@@ -115,7 +115,7 @@ export const CommentItem = ({
           {comment.replies.length > 0 && (
             <button
               onClick={() => setShowReplies(!showReplies)}
-              className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+              className="text-gray-400 hover:text-gray-300 text-sm font-medium"
             >
               {showReplies ? "Hide" : "Show"} {comment.replies.length}{" "}
               {comment.replies.length === 1 ? "reply" : "replies"}
@@ -125,7 +125,7 @@ export const CommentItem = ({
 
         {/* Reply form */}
         {showReplyForm && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3 border-t border-gray-600">
             <CommentForm
               onSubmit={handleReply}
               placeholder="Write a reply..."

@@ -14,29 +14,29 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <header className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Autarc Comments
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Enhancing collaboration and communication
           </p>
-        </div>
+        </header>
 
-        {/* Add new comment form */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        {/* New comment form */}
+        <section className="bg-gray-800 rounded-lg border border-gray-700 p-6 mb-8 shadow-lg">
+          <h2 className="text-lg font-semibold text-white mb-4">
             Add a Comment
           </h2>
           <CommentForm onSubmit={handleAddComment} />
-        </div>
+        </section>
 
         {/* Comments list */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <section>
+          <h2 className="text-lg font-semibold text-white mb-4">
             Comments ({comments.length})
           </h2>
           <CommentList
@@ -44,7 +44,7 @@ function App() {
             onReply={handleReply}
             onDelete={deleteComment}
           />
-        </div>
+        </section>
       </div>
     </div>
   );
