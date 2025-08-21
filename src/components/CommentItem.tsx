@@ -94,7 +94,7 @@ export const CommentItem = ({
           {/* Delete button */}
           <button
             onClick={() => onDelete(comment.id)}
-            className="text-red-300 hover:text-red-200 text-sm font-medium bg-red-900 rounded-md p-2 transition-all"
+            className="text-red-300 hover:text-red-200 ring ring-red-800 hover:ring-white/50 cursor-pointer text-sm font-medium bg-red-900 rounded-md p-2 transition-all"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +115,7 @@ export const CommentItem = ({
         <div className="flex items-center space-x-3 align-middle">
           <button
             onClick={() => setShowReplyForm(!showReplyForm)}
-            className="text-blue-300 hover:text-blue-200 text-sm font-medium bg-blue-900 rounded-md p-2 transition-all"
+            className="text-blue-300 hover:text-blue-200 ring ring-blue-800 hover:ring-white/50 cursor-pointer text-sm font-medium bg-blue-900 rounded-md p-2 transition-all"
           >
             {showReplyForm ? "Cancel" : "Reply"}
           </button>
