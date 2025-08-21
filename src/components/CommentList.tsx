@@ -15,7 +15,12 @@ export const CommentList = ({
   if (comments.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400">
-        <p>No comments yet. Be the first to comment!</p>
+        <p>
+          No comments yet.{" "}
+          <span className="font-semibold">
+            Be the change you wish to see in the world.
+          </span>
+        </p>
       </div>
     );
   }
