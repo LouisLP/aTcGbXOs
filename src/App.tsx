@@ -27,7 +27,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
+    <div className="min-h-screen bg-gray-900 bg-linear-to-b from-blue-900/20 to-purple-800/20 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <header className="flex justify-center items-center p-6 rounded-lg">
@@ -48,7 +48,7 @@ function App() {
         )}
 
         {/* New comment form */}
-        <section className="bg-gray-800 rounded-lg border border-gray-700 p-6 mb-8 shadow-lg">
+        <section className="bg-gray-800/40 backdrop-blur-2xl rounded-lg border border-gray-700/40 p-6 mb-8 shadow-lg">
           <CommentForm onSubmit={handleAddComment} />
         </section>
 
