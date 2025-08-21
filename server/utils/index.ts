@@ -1,5 +1,5 @@
-import type { DbComment } from "./database.js";
-import type { Comment, ApiComment } from "./types.js";
+import type { DbComment } from "../db/index.js";
+import type { Comment, ApiComment } from "../types/index.js";
 
 // Convert flat DB comments to nested structure
 export function buildCommentTree(dbComments: DbComment[]): Comment[] {

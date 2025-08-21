@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
 import { randomUUID } from "crypto";
-import Database from "./database.js";
-import { buildCommentTree, commentToApi } from "./utils.js";
-import type { ApiComment } from "./types.js";
+import Database from "./db";
+import { buildCommentTree, commentToApi } from "./utils";
+import type { ApiComment } from "./types";
 
 const app = express();
-const port = 3001;
+const PORT_NUMBER = 3001;
 const db = new Database();
 
 app.use(cors());
@@ -77,6 +77,6 @@ process.on("SIGINT", () => {
   process.exit(0);
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT_NUMBER, () => {
+  console.log(`Server running at http://localhost:${PORT_NUMBER}`);
 });
