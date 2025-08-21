@@ -6,6 +6,7 @@ export const useComments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<number>(Date.now());
 
   // Convert API comment to internal Comment type
   const apiToComment = useCallback(
@@ -42,6 +43,22 @@ export const useComments = () => {
     loadComments();
   }, [loadComments]);
 
+  // Listen for cross-tab updates (gets fired on add/delete)
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "comments-updated" && e.newValue) {
+        const timestamp = parseInt(e.newValue);
+        if (timestamp > lastUpdate) {
+          loadComments();
+          setLastUpdate(timestamp);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [loadComments, lastUpdate]);
+
   const addComment = useCallback(
     async (text: string, parentId?: string) => {
       try {
@@ -51,14 +68,17 @@ export const useComments = () => {
 
         setComments((prevComments) => {
           if (!parentId) {
-            // Top-level comment
             return [...prevComments, newComment];
           } else {
-            // Reply to existing comment - rebuild tree from API
             loadComments();
             return prevComments;
           }
         });
+
+        // Notify other tabs
+        const timestamp = Date.now();
+        localStorage.setItem("comments-updated", timestamp.toString());
+        setLastUpdate(timestamp);
       } catch (err) {
         const message =
           err instanceof ApiError
@@ -76,12 +96,16 @@ export const useComments = () => {
       setError(null);
       await commentsApi.delete(id);
 
-      // Remove from local state
       setComments((prevComments) =>
         prevComments
           .filter((comment) => comment.id !== id)
           .map((comment) => removeReplyFromComment(comment, id)),
       );
+
+      // Notify other tabs
+      const timestamp = Date.now();
+      localStorage.setItem("comments-updated", timestamp.toString());
+      setLastUpdate(timestamp);
     } catch (err) {
       const message =
         err instanceof ApiError
