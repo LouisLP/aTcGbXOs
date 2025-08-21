@@ -20,7 +20,7 @@ export function buildCommentTree(dbComments: DbComment[]): Comment[] {
 
   // 2nd pass: build the tree structure
   dbComments.forEach((dbComment) => {
-    const comment = commentMap.get(dbComment.id)!;
+    const comment = commentMap.get(dbComment.id) as Comment;
 
     if (dbComment.parent_id) {
       const parent = commentMap.get(dbComment.parent_id);
