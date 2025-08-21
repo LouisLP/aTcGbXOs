@@ -21,7 +21,6 @@ Full stack commenting system built with React, TypeScript, Express, and SQLite f
 
    ```bash
    git clone https://github.com/LouisLP/aTcGbXOs.git
-   cd autarc-challenge
    npm install
    ```
 
