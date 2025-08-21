@@ -6,16 +6,10 @@ export interface Comment {
   replies: Comment[];
 }
 
-export interface CommentStore {
-  comments: Comment[];
-  addComment: (text: string, parentId?: string) => void;
-  deleteComment: (id: string) => void;
-}
-
 export interface ApiComment {
   id: string;
   text: string;
-  createdAt: string; // String from API instead of full date object
+  createdAt: string;
   parentId?: string;
   replies: ApiComment[];
 }

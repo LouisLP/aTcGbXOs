@@ -1,130 +1,104 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import type { Comment, SerializedComment } from "../types";
-
-const STORAGE_KEY = "comments-app-data";
+import { useState, useEffect, useCallback } from "react";
+import type { Comment, ApiComment } from "../types";
+import { commentsApi, ApiError } from "../services/api";
 
 export const useComments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const isLoadingRef = useRef(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Helper function to convert serialized comment to Comment with Date objects
-  const deserializeComment = useCallback(
-    (serialized: SerializedComment): Comment => ({
-      ...serialized,
-      createdAt: new Date(serialized.createdAt),
-      replies: serialized.replies.map(deserializeComment),
+  // Convert API comment to internal Comment type
+  const apiToComment = useCallback(
+    (apiComment: ApiComment): Comment => ({
+      ...apiComment,
+      createdAt: new Date(apiComment.createdAt),
+      replies: apiComment.replies.map(apiToComment),
     }),
     [],
   );
 
-  // Helper function to parse and validate stored comments
-  const parseStoredComments = useCallback(
-    (stored: string): Comment[] => {
-      const parsed: SerializedComment[] = JSON.parse(stored);
-      return parsed.map(deserializeComment);
+  // Load comments from API
+  const loadComments = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const apiComments = await commentsApi.getAll();
+      const commentsWithDates = apiComments.map(apiToComment);
+      setComments(commentsWithDates);
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? `Failed to load comments: ${err.message}`
+          : "Failed to load comments";
+      setError(message);
+      console.error("Error loading comments:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiToComment]);
+
+  // Load comments on mount
+  useEffect(() => {
+    loadComments();
+  }, [loadComments]);
+
+  const addComment = useCallback(
+    async (text: string, parentId?: string) => {
+      try {
+        setError(null);
+        const newApiComment = await commentsApi.add(text, parentId);
+        const newComment = apiToComment(newApiComment);
+
+        setComments((prevComments) => {
+          if (!parentId) {
+            // Top-level comment
+            return [...prevComments, newComment];
+          } else {
+            // Reply to existing comment - rebuild tree from API
+            loadComments();
+            return prevComments;
+          }
+        });
+      } catch (err) {
+        const message =
+          err instanceof ApiError
+            ? `Failed to add comment: ${err.message}`
+            : "Failed to add comment";
+        setError(message);
+        console.error("Error adding comment:", err);
+      }
     },
-    [deserializeComment],
+    [apiToComment, loadComments],
   );
 
-  // Load comments from localStorage on mount
-  useEffect(() => {
-    isLoadingRef.current = true;
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const commentsWithDates = parseStoredComments(stored);
-        setComments(commentsWithDates);
-      } catch (error) {
-        console.error("Failed to parse stored comments:", error);
-      }
+  const deleteComment = useCallback(async (id: string) => {
+    try {
+      setError(null);
+      await commentsApi.delete(id);
+
+      // Remove from local state
+      setComments((prevComments) =>
+        prevComments
+          .filter((comment) => comment.id !== id)
+          .map((comment) => removeReplyFromComment(comment, id)),
+      );
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? `Failed to delete comment: ${err.message}`
+          : "Failed to delete comment";
+      setError(message);
+      console.error("Error deleting comment:", err);
     }
-    isLoadingRef.current = false;
-  }, [parseStoredComments]);
-
-  // Save comments to localStorage whenever comments change (but not during initial load)
-  useEffect(() => {
-    if (isLoadingRef.current) return;
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
-  }, [comments]);
-
-  // Listen for storage changes from other tabs
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      // Only handle storage events from other tabs (not our own dispatched events)
-      if (
-        e.key === STORAGE_KEY &&
-        e.newValue &&
-        e.storageArea === localStorage
-      ) {
-        try {
-          const commentsWithDates = parseStoredComments(e.newValue);
-          setComments(commentsWithDates);
-        } catch (error) {
-          console.error("Failed to parse storage event data:", error);
-        }
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [parseStoredComments]);
-
-  const addComment = useCallback((text: string, parentId?: string) => {
-    const newComment: Comment = {
-      id: crypto.randomUUID(),
-      text: text.trim(),
-      createdAt: new Date(),
-      parentId,
-      replies: [],
-    };
-
-    setComments((prevComments) => {
-      if (!parentId) {
-        // Top-level comment
-        return [...prevComments, newComment];
-      } else {
-        // Reply to existing comment
-        return prevComments.map((comment) =>
-          addReplyToComment(comment, newComment, parentId),
-        );
-      }
-    });
-  }, []);
-
-  const deleteComment = useCallback((id: string) => {
-    setComments((prevComments) =>
-      prevComments
-        .filter((comment) => comment.id !== id)
-        .map((comment) => removeReplyFromComment(comment, id)),
-    );
   }, []);
 
   return {
     comments,
+    loading,
+    error,
     addComment,
     deleteComment,
-  };
-};
-
-// Helper function to add a reply to a comment recursively
-const addReplyToComment = (
-  comment: Comment,
-  newReply: Comment,
-  parentId: string,
-): Comment => {
-  if (comment.id === parentId) {
-    return {
-      ...comment,
-      replies: [...comment.replies, newReply],
-    };
-  }
-
-  return {
-    ...comment,
-    replies: comment.replies.map((reply) =>
-      addReplyToComment(reply, newReply, parentId),
-    ),
+    refetch: loadComments,
   };
 };
 
