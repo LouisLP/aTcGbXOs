@@ -1,69 +1,75 @@
-# React + TypeScript + Vite
+# Autarc Comments App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Full stack commenting system built with React, TypeScript, Express, and SQLite for autarc's take-home challenge. Featuring:
 
-Currently, two official plugins are available:
+- **Threaded Comments**: Nested replies with visual depth indicators
+- **Real-time Persistence**: Comments stored in SQLite database
+- **Modern UI**: Dark theme with Tailwind CSS (because my eyes hurt), responsive, and user-friendly
+- **TypeScript**: Full type safety across frontend and backend
+- **RESTful API**: Basic Express.js backend
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Quick Start
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (v18 or higher)
+- npm or yarn (I like npm)
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+1. **Clone the repository and install dependencies**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+   ```bash
+   git clone https://github.com/LouisLP/aTcGbXOs.git
+   cd autarc-challenge
+   npm install
+   ```
+
+2. **Start the development servers**
+
+   ```bash
+   npm run dev
+   ```
+
+   This will start both:
+   - Frontend (React with Vite): `http://localhost:5173`
+   - Backend (Express): `http://localhost:3001`
+
+3. **Open it up**
+
+   Go to `http://localhost:5173` to use the app.
+
+## 🏗 Architecture
+
+### Database Schema
+
+Comments are (obviously) at the heart of the application, so knowing the structure of the schema is useful when interacting with it. The `created_at` field gave me some issues when SQLite was using UTC rather than local time, so I made it take in an input.
+
+```sql
+CREATE TABLE comments (
+  id TEXT PRIMARY KEY,
+  text TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  parent_id TEXT,
+  FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+);
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🌐 API Endpoints
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+| Method   | Endpoint            | Description                              |
+| -------- | ------------------- | ---------------------------------------- |
+| `GET`    | `/api/comments`     | Retrieve all comments (nested structure) |
+| `POST`   | `/api/comments`     | Create a new comment or reply            |
+| `DELETE` | `/api/comments/:id` | Delete a comment and its replies         |
 
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+> There's also a health-check endpoint at `/api/health`
+
+## 🧪 Testing
+
+I included some basic Vitest tests to cover the main functionality, which I would consider the utilities on the server side (such as building the comment tree). I'm more familiar with Vue, and I didn't work on component tests yet in React.
+
+```bash
+# Run tests in watch mode
+npm test
 ```
