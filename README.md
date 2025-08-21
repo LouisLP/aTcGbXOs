@@ -1,5 +1,7 @@
 # Autarc Comments App
 
+![Example application screenshot](public/example-screenshot.png)
+
 Full stack commenting system built with React, TypeScript, Express, and SQLite for autarc's take-home challenge. Featuring:
 
 - **Threaded Comments**: Nested replies with visual depth indicators
