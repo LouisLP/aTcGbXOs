@@ -85,7 +85,7 @@ export const CommentItem = ({
         {/* Comment header */}
         <div className="flex items-center justify-between mb-2">
           {/* Time posted (shortened) */}
-          <span className="text-sm text-gray-400">
+          <span className="text-xs text-gray-400/80">
             {comment.createdAt.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -123,7 +123,7 @@ export const CommentItem = ({
           {comment.replies.length > 0 && (
             <button
               onClick={() => setShowReplies(!showReplies)}
-              className="flex items-center space-x-1 text-gray-400 hover:text-gray-300 text-sm font-medium"
+              className="flex items-center space-x-1 text-gray-400 cursor-pointer hover:text-gray-300 text-sm font-medium"
             >
               {showReplies ? (
                 <>
