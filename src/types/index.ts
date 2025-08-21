@@ -11,3 +11,11 @@ export interface CommentStore {
   addComment: (text: string, parentId?: string) => void;
   deleteComment: (id: string) => void;
 }
+
+export interface SerializedComment {
+  id: string;
+  text: string;
+  createdAt: string; // Date as regular string when serialized
+  parentId?: string;
+  replies: SerializedComment[];
+}

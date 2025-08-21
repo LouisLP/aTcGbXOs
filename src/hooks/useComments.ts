@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { Comment } from "../types";
+import type { Comment, SerializedComment } from "../types";
 
 const STORAGE_KEY = "comments-app-data";
 
@@ -7,29 +7,39 @@ export const useComments = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const isLoadingRef = useRef(false);
 
+  // Helper function to convert serialized comment to Comment with Date objects
+  const deserializeComment = useCallback(
+    (serialized: SerializedComment): Comment => ({
+      ...serialized,
+      createdAt: new Date(serialized.createdAt),
+      replies: serialized.replies.map(deserializeComment),
+    }),
+    [],
+  );
+
+  // Helper function to parse and validate stored comments
+  const parseStoredComments = useCallback(
+    (stored: string): Comment[] => {
+      const parsed: SerializedComment[] = JSON.parse(stored);
+      return parsed.map(deserializeComment);
+    },
+    [deserializeComment],
+  );
+
   // Load comments from localStorage on mount
   useEffect(() => {
     isLoadingRef.current = true;
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        const parsed = JSON.parse(stored);
-        // Convert date strings back to Date objects
-        const commentsWithDates = parsed.map((comment: any) => ({
-          ...comment,
-          createdAt: new Date(comment.createdAt),
-          replies: comment.replies.map((reply: any) => ({
-            ...reply,
-            createdAt: new Date(reply.createdAt),
-          })),
-        }));
+        const commentsWithDates = parseStoredComments(stored);
         setComments(commentsWithDates);
       } catch (error) {
         console.error("Failed to parse stored comments:", error);
       }
     }
     isLoadingRef.current = false;
-  }, []);
+  }, [parseStoredComments]);
 
   // Save comments to localStorage whenever comments change (but not during initial load)
   useEffect(() => {
@@ -48,15 +58,7 @@ export const useComments = () => {
         e.storageArea === localStorage
       ) {
         try {
-          const parsed = JSON.parse(e.newValue);
-          const commentsWithDates = parsed.map((comment: any) => ({
-            ...comment,
-            createdAt: new Date(comment.createdAt),
-            replies: comment.replies.map((reply: any) => ({
-              ...reply,
-              createdAt: new Date(reply.createdAt),
-            })),
-          }));
+          const commentsWithDates = parseStoredComments(e.newValue);
           setComments(commentsWithDates);
         } catch (error) {
           console.error("Failed to parse storage event data:", error);
@@ -66,7 +68,7 @@ export const useComments = () => {
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  }, [parseStoredComments]);
 
   const addComment = useCallback((text: string, parentId?: string) => {
     const newComment: Comment = {
