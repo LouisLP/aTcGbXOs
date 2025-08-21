@@ -1,6 +1,7 @@
 import { useComments } from "./hooks/useComments";
 import { CommentForm } from "./components/CommentForm";
 import { CommentList } from "./components/CommentList";
+import { AutarcLogo } from "./components/svgs/AutarcLogo";
 
 function App() {
   const { comments, loading, error, addComment, deleteComment, refetch } =
@@ -29,13 +30,8 @@ function App() {
     <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Autarc Comments
-          </h1>
-          <p className="text-gray-300">
-            Enhancing collaboration and communication
-          </p>
+        <header className="flex justify-center items-center p-6 rounded-lg">
+          <AutarcLogo width={200} height={200} className="text-gray-100" />
         </header>
 
         {/* Error message */}
