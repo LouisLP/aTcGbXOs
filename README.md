@@ -72,3 +72,11 @@ I included some basic Vitest tests to cover the main functionality, which I woul
 # Run tests in watch mode
 npm test
 ```
+
+## 🪞 Reflections/Extras
+
+1. I'm used to using Vue, so a lot of this was getting back into the React mindset, and asking myself, "what's the best equivalent to what I'd do in Vue?". For example, I'd probably make a [composable](https://vuejs.org/guide/reusability/composables) for `useComments`, but a [custom hook](https://react.dev/learn/reusing-logic-with-custom-hooks) in React serves a similar purpose.
+2. With more time, I'd add more tests and varied test types.
+3. After clicking "reply", you should keep your scroll position.
+4. Upon adding enough replies, the scrollbar appears and pops the content to the side slightly.
+5. Mobile could be considered a bit more with dynamic resizing of reply margins, for example.
