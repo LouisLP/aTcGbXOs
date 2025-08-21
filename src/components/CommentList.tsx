@@ -21,7 +21,7 @@ export const CommentList = ({
   }
 
   return (
-    <article className="space-y-4">
+    <article id="comment-list" className="space-y-4">
       {comments.map((comment) => (
         <CommentItem
           key={comment.id}

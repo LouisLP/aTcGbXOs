@@ -78,7 +78,7 @@ export const CommentItem = ({
   const styling = getDepthStyling(depth);
 
   return (
-    <div className={`space-y-3 ${styling.margin}`}>
+    <div id={`comment-${comment.id}`} className={`space-y-3 ${styling.margin}`}>
       <div
         className={`${styling.background} ${styling.border} ${styling.leftBorder} rounded-lg border p-4 shadow-lg`}
       >
