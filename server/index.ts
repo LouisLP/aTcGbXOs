@@ -35,15 +35,18 @@ app.post("/api/comments", async (req, res) => {
     }
 
     const id = randomUUID();
-    await db.addComment(id, text.trim(), parentId);
+    const createdAt = new Date().toISOString();
+
+    // Passing the ISO string to the database
+    await db.addComment(id, text.trim(), createdAt, parentId);
 
     // Return proper ApiComment structure
     const newApiComment: ApiComment = {
       id,
       text: text.trim(),
-      createdAt: new Date().toISOString(),
+      createdAt, // Same ISO string
       parentId,
-      replies: [], // Initialize empty replies array
+      replies: [],
     };
 
     res.status(201).json(newApiComment);

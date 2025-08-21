@@ -19,7 +19,7 @@ class Database {
       CREATE TABLE IF NOT EXISTS comments (
         id TEXT PRIMARY KEY,
         text TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_at TEXT NOT NULL,
         parent_id TEXT,
         FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
       )
@@ -33,11 +33,16 @@ class Database {
     >;
   }
 
-  async addComment(id: string, text: string, parentId?: string): Promise<void> {
+  async addComment(
+    id: string,
+    text: string,
+    createdAt: string,
+    parentId?: string,
+  ): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.db.run(
-        "INSERT INTO comments (id, text, parent_id) VALUES (?, ?, ?)",
-        [id, text, parentId || null],
+        "INSERT INTO comments (id, text, created_at, parent_id) VALUES (?, ?, ?, ?)",
+        [id, text, createdAt, parentId || null],
         (err) => {
           if (err) reject(err);
           else resolve();
