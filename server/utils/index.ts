@@ -6,7 +6,7 @@ export function buildCommentTree(dbComments: DbComment[]): Comment[] {
   const commentMap = new Map<string, Comment>();
   const rootComments: Comment[] = [];
 
-  // First pass: create all comment objects
+  // 1st pass: create all comment objects
   dbComments.forEach((dbComment) => {
     const comment: Comment = {
       id: dbComment.id,
@@ -18,7 +18,7 @@ export function buildCommentTree(dbComments: DbComment[]): Comment[] {
     commentMap.set(comment.id, comment);
   });
 
-  // Second pass: build the tree structure
+  // 2nd pass: build the tree structure
   dbComments.forEach((dbComment) => {
     const comment = commentMap.get(dbComment.id)!;
 
